@@ -138,14 +138,11 @@ You only need to do this once — it saves the token to your local config file.
 
 ## Step 4 — Set up the nginx config
 
-Clone or download this repo, then place the `nginx.conf` file wherever you want. We recommend your project folder.
+create and place this `nginx.conf` file wherever you want. We recommend your project folder.
 
 The full config is in [`nginx.conf`](nginx.conf) in this repo. Here's what it contains:
 
 ```nginx
-# Custom nginx config - no root required for this file
-# But you'll still need sudo to run nginx on port 80
-
 worker_processes  1;
 
 events {
@@ -153,16 +150,6 @@ events {
 }
 
 http {
-
-    # Linux/WSL2 only: redirect temp files to /tmp to avoid permission issues
-    # when running nginx with a custom config file.
-    # Windows users: remove or comment out these 5 lines — nginx handles temp files automatically.
-    client_body_temp_path /tmp/nginx_client_temp;
-    proxy_temp_path       /tmp/nginx_proxy_temp;
-    fastcgi_temp_path     /tmp/nginx_fastcgi_temp;
-    uwsgi_temp_path       /tmp/nginx_uwsgi_temp;
-    scgi_temp_path        /tmp/nginx_scgi_temp;
-
     sendfile        on;
     keepalive_timeout  65;
 
@@ -201,15 +188,66 @@ http {
 
 **You can change the port numbers** (`3000`, `8000`) to match whatever ports your apps run on. Just edit `nginx.conf` in any text editor before starting.
 
-### Windows: temp folder config
+---
 
-The `client_body_temp_path` and related lines in `nginx.conf` are **only needed on Linux/WSL2** — they redirect temp files to `/tmp/` to avoid permission issues when running nginx with a custom config.
+## Step 5 — Update your environment variables
 
-On **native Windows**, nginx automatically creates a `temp\` folder inside its own installation directory and uses it by default. You can safely **remove or ignore those lines** when using Windows.
+Your frontend and backend need to know the ngrok URL so they talk to each other through the tunnel instead of `localhost`.
+
+We've included two ready-to-use env files in this repo: [`.env.frontend`](.env.frontend) and [`.env.backend`](.env.backend). You'll copy the relevant lines into your existing `.env` files.
+
+### What the variables do
+
+**Frontend** — copy these into your frontend `.env.development` (or equivalent):
+
+```env
+GATSBY_API_URL=https://<YOUR-NGROK-URL>.ngrok-free.app/api  # tells the frontend where to send API calls
+GATSBY_DOMAIN=https://<YOUR-NGROK-URL>.ngrok-free.app       # the public URL of the app itself
+GATSBY_AUTH0_DOMAIN=dev-<YOUR-AUTH0>.us.auth0.com           # your Auth0 domain (unchanged)
+GATSBY_AUTH0_CLIENT_ID=<YOUR-CLIENT-ID>                     # your Auth0 client ID (unchanged)
+GATSBY_AUTH0_AUDIENCE=https://dev-<YOUR-AUTH0>.us.auth0.com/api/v2/  # your Auth0 audience (unchanged)
+```
+
+**Backend** — copy these into your backend `.env` (or equivalent):
+
+```env
+FRONTEND_URL=https://<YOUR-NGROK-URL>.ngrok-free.app        # tells the backend which origin to trust (CORS)
+AUTH0_AUDIENCE=https://dev-<YOUR-AUTH0>.us.auth0.com/api/v2/  # your Auth0 audience (unchanged)
+AUTH0_ISSUERBASEURL=https://dev-<YOUR-AUTH0>.us.auth0.com   # your Auth0 issuer (unchanged)
+```
+
+### How to do it
+
+1. **Start ngrok first** (Step 8 below) to get your URL, e.g. `https://abc123.ngrok-free.app`
+2. Open your frontend `.env.development` and your backend `.env` in a text editor
+3. Find the lines above (they may already exist) and update the values — replace `<YOUR-NGROK-URL>` with your actual ngrok subdomain (just the part before `.ngrok-free.app`)
+4. **Restart both servers** so they pick up the new values:
+
+```bash
+# Stop each server with Ctrl+C, then start it again
+npm run dev
+```
+
+### When you're done sharing
+
+Comment out those lines instead of deleting them — you'll want them ready for next time:
+
+**Frontend `.env.development`:**
+```env
+# GATSBY_API_URL=https://<YOUR-NGROK-URL>.ngrok-free.app/api
+# GATSBY_DOMAIN=https://<YOUR-NGROK-URL>.ngrok-free.app
+```
+
+**Backend `.env`:**
+```env
+# FRONTEND_URL=https://<YOUR-NGROK-URL>.ngrok-free.app
+```
+
+Next time you share, just uncomment those lines, update the URL (it changes every ngrok restart), and restart your servers.
 
 ---
 
-## Step 5 — Start nginx with the config
+## Step 6 — Start nginx with the config
 
 ### Linux / macOS / WSL2
 
@@ -273,7 +311,7 @@ curl http://localhost:6969
 
 ---
 
-## Step 6 — Start your apps
+## Step 7 — Start your apps
 
 Make sure your actual apps are running on their ports **before** sharing the ngrok URL.
 
@@ -289,7 +327,7 @@ npm run dev
 
 ---
 
-## Step 7 — Start ngrok
+## Step 8 — Start ngrok
 
 In a new terminal, run:
 
@@ -333,8 +371,13 @@ npm run dev   # port 3000
 # 3. Start your frontend (new terminal)
 npm run dev   # port 8000
 
-# 4. Start ngrok (new terminal)
+# 4. Start ngrok (new terminal) — copy the URL it gives you
 ngrok http 6969
+
+# 5. Update GATSBY_API_URL / FRONTEND_URL in your .env files with the ngrok URL
+#    then restart your backend and frontend servers
+
+# 6. Share the ngrok URL with your teammate
 ```
 
 ### Windows (native)
@@ -351,8 +394,13 @@ npm run dev
 :: 3. Start your frontend (new terminal)
 npm run dev
 
-:: 4. Start ngrok (new terminal)
+:: 4. Start ngrok (new terminal) — copy the URL it gives you
 ngrok http 6969
+
+:: 5. Update GATSBY_API_URL / FRONTEND_URL in your .env files with the ngrok URL
+::    then restart your backend and frontend servers
+
+:: 6. Share the ngrok URL with your teammate
 ```
 
 Then copy the ngrok URL and share it.
@@ -370,6 +418,16 @@ Then copy the ngrok URL and share it.
 sudo nginx -s stop
 ```
 
+Then open your `.env.development` (frontend) and `.env` (backend) and comment out the ngrok lines:
+
+```env
+# GATSBY_API_URL=https://...
+# GATSBY_DOMAIN=https://...
+# FRONTEND_URL=https://...
+```
+
+Restart your servers normally so they go back to using `localhost`.
+
 ### Windows (native)
 
 ```cmd
@@ -378,6 +436,16 @@ sudo nginx -s stop
 :: Stop nginx (Admin Command Prompt)
 nginx -s stop
 ```
+
+Then open your `.env.development` (frontend) and `.env` (backend) and comment out the ngrok lines:
+
+```env
+# GATSBY_API_URL=https://...
+# GATSBY_DOMAIN=https://...
+# FRONTEND_URL=https://...
+```
+
+Restart your servers normally so they go back to using `localhost`.
 
 ---
 
