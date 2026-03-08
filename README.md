@@ -95,16 +95,19 @@ npm run dev
 ### 1. Install nginx
 
 **Ubuntu / Debian / WSL2**
+
 ```bash
 sudo apt update && sudo apt install nginx -y
 ```
 
 **macOS**
+
 ```bash
 brew install nginx
 ```
 
 **Windows**
+
 1. Download the Stable zip from [nginx.org/en/download.html](https://nginx.org/en/download.html)
 2. Extract to `C:\nginx` (no spaces in the path)
 
@@ -128,15 +131,18 @@ sudo apt update && sudo apt install ngrok -y
 > Have Snap? Just run `snap install ngrok` instead.
 
 **macOS**
+
 ```bash
 brew install ngrok/ngrok/ngrok
 ```
 
 **Windows** — pick one:
+
 ```powershell
 choco install ngrok       # if you have Chocolatey
 winget install ngrok.ngrok  # if you have winget
 ```
+
 Or download manually from [ngrok.com/download](https://ngrok.com/download) and add it to your PATH.
 
 ---
@@ -161,19 +167,13 @@ Copy [`nginx.conf`](nginx.conf) from this repo into your project folder.
 
 The full config is already set up for you. The only things you might want to change are the port numbers if your apps don't run on `3000` and `8000`:
 
-```nginx
+````nginx
 location /api/ {
     proxy_pass http://localhost:3000/;  # ← change 3000 to your backend port
 }
 location / {
     proxy_pass http://localhost:8000;   # ← change 8000 to your frontend port
 }
-```
-
-> **Linux/WSL2 note:** The config uses `/tmp/` for nginx temp files to avoid permission issues. This is already included — nothing to change.
->
-> **Windows note:** Those `/tmp/` lines don't apply to you. You can delete them — nginx handles temp files automatically on Windows.
-
 ---
 
 ### 5. Update your environment variables
@@ -186,9 +186,10 @@ Your frontend and backend need to know the ngrok URL, otherwise they'll still ta
 ```env
 GATSBY_API_URL=https://abc123.ngrok-free.app/api
 GATSBY_DOMAIN=https://abc123.ngrok-free.app
-```
+````
 
 **Backend `.env`:**
+
 ```env
 FRONTEND_URL=https://abc123.ngrok-free.app
 ```
@@ -196,6 +197,7 @@ FRONTEND_URL=https://abc123.ngrok-free.app
 Example env files are in this repo: [`.env.frontend`](.env.frontend) and [`.env.backend`](.env.backend).
 
 **When you're done sharing**, comment these out (don't delete — you'll need them next time):
+
 ```env
 # GATSBY_API_URL=https://abc123.ngrok-free.app/api
 # FRONTEND_URL=https://abc123.ngrok-free.app
@@ -221,15 +223,15 @@ Then comment out the ngrok URLs in your `.env` files and restart your servers no
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---|---|
-| `nginx: open() failed` | Use the full absolute path to `nginx.conf` |
-| `Address already in use` on port 6969 | Something else is using 6969 — change the port in `nginx.conf` and in `ngrok http <port>` |
-| `curl localhost:6969` returns nothing | Your backend or frontend isn't running yet |
-| `ERR_NGROK_3200` | nginx isn't running or nothing is listening on port 6969 |
-| Teammate sees a browser warning on the ngrok URL | They need to click "Visit Site" — it's just ngrok's free tier interstitial |
-| API calls fail with CORS errors | Add the ngrok domain to your backend's CORS allowed origins |
-| Windows: nginx closes immediately | Check `C:\nginx\logs\error.log` for the error |
+| Problem                                          | Fix                                                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `nginx: open() failed`                           | Use the full absolute path to `nginx.conf`                                                |
+| `Address already in use` on port 6969            | Something else is using 6969 — change the port in `nginx.conf` and in `ngrok http <port>` |
+| `curl localhost:6969` returns nothing            | Your backend or frontend isn't running yet                                                |
+| `ERR_NGROK_3200`                                 | nginx isn't running or nothing is listening on port 6969                                  |
+| Teammate sees a browser warning on the ngrok URL | They need to click "Visit Site" — it's just ngrok's free tier interstitial                |
+| API calls fail with CORS errors                  | Add the ngrok domain to your backend's CORS allowed origins                               |
+| Windows: nginx closes immediately                | Check `C:\nginx\logs\error.log` for the error                                             |
 
 ---
 
