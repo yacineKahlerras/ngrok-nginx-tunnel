@@ -22,9 +22,9 @@ Frontend  Backend API
 
 ## Prerequisites
 
-- A machine running **Linux, macOS, or WSL2** (Windows Subsystem for Linux)
+- A machine running **Linux, macOS, Windows (native), or WSL2**
 - A free ngrok account → [ngrok.com](https://ngrok.com)
-- `sudo` access (needed to run nginx)
+- `sudo` / admin access (needed to run nginx)
 
 ---
 
@@ -43,14 +43,29 @@ sudo apt install nginx -y
 brew install nginx
 ```
 
-Verify it installed:
+### Windows (native)
+
+1. Go to [nginx.org/en/download.html](https://nginx.org/en/download.html)
+2. Download the latest **Stable version** zip (e.g. `nginx-1.26.x.zip`)
+3. Extract the zip to a simple path with no spaces, for example: `C:\nginx`
+4. You should now have `C:\nginx\nginx.exe` and `C:\nginx\conf\nginx.conf`
+
+> **Tip**: Avoid paths with spaces (e.g. `C:\Program Files\`) — nginx on Windows does not handle them well.
+
+**Verify it installed:**
 
 ```bash
+# Linux / macOS / WSL2
 nginx -v
-# Should print something like: nginx version: nginx/1.24.0
+
+# Windows — open Command Prompt, navigate to the nginx folder, then run:
+cd C:\nginx
+nginx -v
 ```
 
-> **More info**: [nginx beginner's guide](https://nginx.org/en/docs/beginners_guide.html)
+Both should print something like: `nginx version: nginx/1.26.x`
+
+> **More info**: [nginx beginner's guide](https://nginx.org/en/docs/beginners_guide.html) | [nginx on Windows](https://nginx.org/en/docs/windows.html)
 
 ---
 
@@ -74,11 +89,26 @@ sudo apt update && sudo apt install ngrok -y
 brew install ngrok/ngrok/ngrok
 ```
 
-### Windows
+### Windows (native)
 
-Download the installer from [ngrok.com/download](https://ngrok.com/download) and run it.
+**Option A — Chocolatey** (recommended if you have it):
+```powershell
+choco install ngrok
+```
 
-Verify it installed:
+**Option B — winget**:
+```powershell
+winget install ngrok.ngrok
+```
+
+**Option C — manual**:
+1. Go to [ngrok.com/download](https://ngrok.com/download)
+2. Download the Windows zip
+3. Extract `ngrok.exe` to a folder, e.g. `C:\ngrok\`
+4. Add `C:\ngrok\` to your system PATH so you can run `ngrok` from any terminal
+   - Search **"Environment Variables"** in the Start menu → Edit the system environment variables → Environment Variables → select `Path` → Edit → New → paste `C:\ngrok\`
+
+**Verify it installed:**
 
 ```bash
 ngrok version
@@ -93,21 +123,21 @@ ngrok version
 
 1. Sign up or log in at [ngrok.com](https://ngrok.com)
 2. Go to your [ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken) and copy your **authtoken**
-3. Run this command, replacing `<YOUR_TOKEN>` with your actual token:
+3. Run this command in any terminal, replacing `<YOUR_TOKEN>` with your actual token:
 
 ```bash
 ngrok config add-authtoken <YOUR_TOKEN>
 ```
 
-You only need to do this once — it saves the token to your local config.
+You only need to do this once — it saves the token to your local config file.
 
 ---
 
 ## Step 4 — Set up the nginx config
 
-Clone or download this repo, then copy the config file to wherever you want to keep it. We recommend your project folder.
+Clone or download this repo, then place the `nginx.conf` file wherever you want. We recommend your project folder.
 
-The config file is `nginx.conf`. Here's what it does:
+Here's what the config does:
 
 ```nginx
 server {
@@ -125,13 +155,37 @@ server {
 }
 ```
 
-**You can change the port numbers** (`3000`, `8000`) to match whatever ports your apps run on. Just edit `nginx.conf` in a text editor before starting.
+**You can change the port numbers** (`3000`, `8000`) to match whatever ports your apps run on. Just edit `nginx.conf` in any text editor before starting.
+
+### Windows: temp folder config
+
+On Windows, nginx needs writable temp folders. The provided `nginx.conf` already sets these to `/tmp/` which works in WSL2. For **native Windows**, replace the temp path lines at the top of `nginx.conf` with:
+
+```nginx
+client_body_temp_path  C:/nginx/temp/client;
+proxy_temp_path        C:/nginx/temp/proxy;
+fastcgi_temp_path      C:/nginx/temp/fastcgi;
+uwsgi_temp_path        C:/nginx/temp/uwsgi;
+scgi_temp_path         C:/nginx/temp/scgi;
+```
+
+Then create those folders before starting:
+
+```powershell
+mkdir C:\nginx\temp\client
+mkdir C:\nginx\temp\proxy
+mkdir C:\nginx\temp\fastcgi
+mkdir C:\nginx\temp\uwsgi
+mkdir C:\nginx\temp\scgi
+```
 
 ---
 
 ## Step 5 — Start nginx with the config
 
-> **Important**: You must use `sudo` because nginx needs to bind to a port.
+### Linux / macOS / WSL2
+
+> You need `sudo` because nginx binds to a port.
 
 Navigate to the folder containing `nginx.conf`, then run:
 
@@ -139,43 +193,70 @@ Navigate to the folder containing `nginx.conf`, then run:
 sudo nginx -c "$(pwd)/nginx.conf"
 ```
 
-The `$(pwd)` automatically fills in the full path to your current folder — nginx requires an **absolute path** to the config file.
+`$(pwd)` fills in the absolute path automatically — nginx requires it.
 
-**Verify nginx is running:**
+Reload after config changes:
+
+```bash
+sudo nginx -c "$(pwd)/nginx.conf" -s reload
+```
+
+Stop nginx:
+
+```bash
+sudo nginx -s stop
+```
+
+### Windows (native)
+
+Open **Command Prompt as Administrator** (right-click → Run as administrator), navigate to where `nginx.conf` is, then run:
+
+```cmd
+cd C:\nginx
+nginx -c C:\path\to\your\nginx.conf
+```
+
+Replace `C:\path\to\your\nginx.conf` with the actual full path to the config file, for example:
+
+```cmd
+nginx -c C:\Users\YourName\projects\turbodocx\nginx\nginx.conf
+```
+
+Reload after config changes:
+
+```cmd
+nginx -c C:\Users\YourName\projects\turbodocx\nginx\nginx.conf -s reload
+```
+
+Stop nginx:
+
+```cmd
+nginx -s stop
+```
+
+**Verify nginx is running** (any OS):
 
 ```bash
 curl http://localhost:6969
 # You should see your frontend's HTML, or a response from your app
 ```
 
-**If nginx is already running** and you want to reload after changing the config:
-
-```bash
-sudo nginx -c "$(pwd)/nginx.conf" -s reload
-```
-
-**To stop nginx:**
-
-```bash
-sudo nginx -s stop
-```
-
-> **Troubleshooting nginx**: [common nginx errors](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/)
+> **Troubleshooting nginx**: [common nginx errors](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/) | [nginx on Windows docs](https://nginx.org/en/docs/windows.html)
 
 ---
 
 ## Step 6 — Start your apps
 
-Make sure your actual apps are running on their respective ports **before** you share the ngrok URL.
+Make sure your actual apps are running on their ports **before** sharing the ngrok URL.
 
-For example (run each in a separate terminal):
+Run each in a separate terminal:
 
 ```bash
-# Terminal 1 — start your backend on port 3000
-npm run dev   # or whatever your backend start command is
+# Terminal 1 — backend on port 3000
+npm run dev
 
-# Terminal 2 — start your frontend on port 8000
-npm run dev   # or whatever your frontend start command is
+# Terminal 2 — frontend on port 8000
+npm run dev
 ```
 
 ---
@@ -202,7 +283,7 @@ Copy the `https://abc123.ngrok-free.app` URL and send it to your teammate.
 - **Frontend**: `https://abc123.ngrok-free.app/`
 - **Backend API**: `https://abc123.ngrok-free.app/api/`
 
-> **Note**: The URL changes every time you restart ngrok on the free plan. If your teammate needs a stable URL, you'll need a paid ngrok plan or a static domain.
+> **Note**: The URL changes every time you restart ngrok on the free plan. A paid plan gives you a stable static domain.
 
 > **More info**: [ngrok HTTP tunnels docs](https://ngrok.com/docs/http/)
 
@@ -210,19 +291,39 @@ Copy the `https://abc123.ngrok-free.app` URL and send it to your teammate.
 
 ## Full startup checklist
 
-Every time you want to share your environment, run these steps in order:
+### Linux / macOS / WSL2
+
+Run these in order, each in its own terminal:
 
 ```bash
-# 1. Start nginx (from the folder containing nginx.conf)
+# 1. Start nginx
 sudo nginx -c "$(pwd)/nginx.conf"
 
-# 2. Start your backend (in a separate terminal)
-npm run dev   # backend on port 3000
+# 2. Start your backend (new terminal)
+npm run dev   # port 3000
 
-# 3. Start your frontend (in a separate terminal)
-npm run dev   # frontend on port 8000
+# 3. Start your frontend (new terminal)
+npm run dev   # port 8000
 
-# 4. Start ngrok (in a separate terminal)
+# 4. Start ngrok (new terminal)
+ngrok http 6969
+```
+
+### Windows (native)
+
+Open **Command Prompt as Administrator** for step 1, regular terminals for the rest:
+
+```cmd
+:: 1. Start nginx (Admin Command Prompt)
+nginx -c C:\path\to\nginx.conf
+
+:: 2. Start your backend (new terminal)
+npm run dev
+
+:: 3. Start your frontend (new terminal)
+npm run dev
+
+:: 4. Start ngrok (new terminal)
 ngrok http 6969
 ```
 
@@ -232,7 +333,7 @@ Then copy the ngrok URL and share it.
 
 ## Teardown
 
-When you're done:
+### Linux / macOS / WSL2
 
 ```bash
 # Stop ngrok: press Ctrl+C in the ngrok terminal
@@ -241,24 +342,38 @@ When you're done:
 sudo nginx -s stop
 ```
 
+### Windows (native)
+
+```cmd
+:: Stop ngrok: press Ctrl+C in the ngrok terminal
+
+:: Stop nginx (Admin Command Prompt)
+nginx -s stop
+```
+
 ---
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| `nginx: [error] open() "/path/nginx.conf" failed` | Make sure you run the command from the same folder as `nginx.conf`, and use `$(pwd)` |
-| `bind() to 0.0.0.0:6969 failed (98: Address already in use)` | Something is already on port 6969. Either stop it or change the port in `nginx.conf` and in the ngrok command |
+| `nginx: [error] open() "/path/nginx.conf" failed` | Use the full absolute path. On Linux/macOS use `$(pwd)/nginx.conf`. On Windows write it out: `C:\path\to\nginx.conf` |
+| `bind() to 0.0.0.0:6969 failed (98: Address already in use)` | Port 6969 is taken. Stop the other process or change the port in `nginx.conf` and in the ngrok command |
+| Windows: `CreateFile()` or permission errors on temp folders | Create the temp folders manually (see Step 4 Windows section) and run Command Prompt as Administrator |
+| Windows: nginx starts but immediately closes | Check `C:\nginx\logs\error.log` for the error message |
 | `curl http://localhost:6969` returns nothing | Your app on port 3000 or 8000 isn't running yet |
-| ngrok shows `ERR_NGROK_3200` | Your local server isn't running or isn't reachable |
+| ngrok shows `ERR_NGROK_3200` | Your local server isn't running or isn't reachable on the expected port |
 | Teammate gets a browser warning about the ngrok URL | They need to click "Visit Site" to bypass ngrok's free tier interstitial page |
+| Teammate's API calls fail with CORS errors | Make sure your backend's CORS config allows the ngrok domain |
 
 ---
 
 ## References
 
 - [nginx documentation](https://nginx.org/en/docs/)
+- [nginx on Windows](https://nginx.org/en/docs/windows.html)
 - [nginx reverse proxy guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 - [ngrok getting started](https://ngrok.com/docs/getting-started/)
 - [ngrok HTTP tunnels](https://ngrok.com/docs/http/)
 - [ngrok free vs paid](https://ngrok.com/pricing)
+- [How to add a folder to PATH on Windows](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
