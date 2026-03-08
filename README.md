@@ -167,13 +167,15 @@ Copy [`nginx.conf`](nginx.conf) from this repo into your project folder.
 
 The full config is already set up for you. The only things you might want to change are the port numbers if your apps don't run on `3000` and `8000`:
 
-````nginx
+```nginx
 location /api/ {
     proxy_pass http://localhost:3000/;  # ← change 3000 to your backend port
 }
 location / {
     proxy_pass http://localhost:8000;   # ← change 8000 to your frontend port
 }
+```
+
 ---
 
 ### 5. Update your environment variables
@@ -183,10 +185,11 @@ Your frontend and backend need to know the ngrok URL, otherwise they'll still ta
 > **Note:** The variable names below are specific to this project (Gatsby + Express + Auth0). Your project will have different names — just find whichever variable holds your API URL and update it.
 
 **Frontend `.env.development`:**
+
 ```env
 GATSBY_API_URL=https://abc123.ngrok-free.app/api
 GATSBY_DOMAIN=https://abc123.ngrok-free.app
-````
+```
 
 **Backend `.env`:**
 
