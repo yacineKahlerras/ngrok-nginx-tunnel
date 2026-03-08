@@ -206,11 +206,11 @@ Example env files are in this repo: [`.env.frontend`](.env.frontend) and [`.env.
 # FRONTEND_URL=https://abc123.ngrok-free.app
 ```
 
-> The ngrok URL does **not** changes every time you restart ngrok. so you **don't** Update it in your `.env` files each session.
+> The ngrok URL does **not** changes every time you restart ngrok. so you **do not** have to Update it in your `.env` files each session.
 
 ---
 
-## Teardown
+## Terminating
 
 ```bash
 # Stop ngrok → Ctrl+C in the ngrok terminal
@@ -220,7 +220,7 @@ sudo nginx -s stop          # Linux / macOS / WSL2
 nginx -s stop               # Windows (Admin Command Prompt)
 ```
 
-Then comment out the ngrok URLs in your `.env` files and restart your servers normally.
+Then **comment out** the ngrok URLs in your `.env` files and restart your servers normally.
 
 ---
 
