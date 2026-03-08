@@ -320,7 +320,7 @@ Open **Command Prompt as Administrator** (right-click the Start menu → "Comman
 nginx -c C:\Users\YourName\myproject\nginx\nginx.conf
 ```
 
-Replace `C:\Users\YourName\myproject\nginx\nginx.conf` with the actual location of your file. Not sure of the full path? Open File Explorer, go to the folder where `nginx.conf` is, click the address bar at the top — it shows the full path. Copy and paste it, then add `\nginx.conf` at the end.
+> **Don't know your full path?** Open File Explorer, go to the folder where `nginx.conf` is, click the address bar at the top — it shows the full path. Copy and paste it, then add `\nginx.conf` at the end.
 
 Reload after config changes:
 
