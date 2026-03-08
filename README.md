@@ -182,7 +182,7 @@ location / {
 
 Your frontend and backend need to know the ngrok URL, otherwise they'll still talk to `localhost` and things will break.
 
-> **Note:** The variable names below are specific to this project (Gatsby + Express + Auth0). Your project will have different names — just find whichever variable holds your API URL and update it.
+> **Note:** The variable names below are specific to this project (Gatsby + Express + Auth0). Your project will have different names — just find whichever variable holds your API and Frontend URLs and update it.
 
 **Frontend `.env.development`:**
 
