@@ -206,7 +206,7 @@ Example env files are in this repo: [`.env.frontend`](.env.frontend) and [`.env.
 # FRONTEND_URL=https://abc123.ngrok-free.app
 ```
 
-> The ngrok URL changes every time you restart ngrok. Update it in your `.env` files each session.
+> The ngrok URL does **not** changes every time you restart ngrok. so you **don't** Update it in your `.env` files each session.
 
 ---
 
