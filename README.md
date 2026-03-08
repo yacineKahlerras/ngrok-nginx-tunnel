@@ -399,17 +399,16 @@ Run these in order, each in its own terminal:
 # 1. Start nginx — replace the path with your actual nginx.conf location
 sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf"
 
-# 2. Start your backend (new terminal)
-npm run dev   # port 3000
-
-# 3. Start your frontend (new terminal)
-npm run dev   # port 8000
-
-# 4. Start ngrok (new terminal) — copy the URL it gives you
+# 2. Start ngrok (new terminal) — copy the URL it gives you
 ngrok http 6969
 
-# 5. Update GATSBY_API_URL / FRONTEND_URL in your .env files with the ngrok URL
-#    then restart your backend and frontend servers
+# 3. Update your .env files with the ngrok URL
+
+# 4. Start your backend (new terminal)
+npm run dev   # port 3000
+
+# 5. Start your frontend (new terminal)
+npm run dev   # port 8000
 
 # 6. Share the ngrok URL with your teammate
 ```
@@ -420,19 +419,18 @@ Open **Command Prompt as Administrator** for step 1, regular terminals for the r
 
 ```cmd
 :: 1. Start nginx (Admin Command Prompt)
-nginx -c C:\path\to\nginx.conf
+nginx -c C:\Users\YourName\myproject\nginx\nginx.conf
 
-:: 2. Start your backend (new terminal)
-npm run dev
-
-:: 3. Start your frontend (new terminal)
-npm run dev
-
-:: 4. Start ngrok (new terminal) — copy the URL it gives you
+:: 2. Start ngrok (new terminal) — copy the URL it gives you
 ngrok http 6969
 
-:: 5. Update GATSBY_API_URL / FRONTEND_URL in your .env files with the ngrok URL
-::    then restart your backend and frontend servers
+:: 3. Update your .env files with the ngrok URL
+
+:: 4. Start your backend (new terminal)
+npm run dev
+
+:: 5. Start your frontend (new terminal)
+npm run dev
 
 :: 6. Share the ngrok URL with your teammate
 ```
