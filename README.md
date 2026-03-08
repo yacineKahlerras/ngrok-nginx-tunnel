@@ -226,15 +226,44 @@ AUTH0_ISSUERBASEURL=https://dev-<YOUR-AUTH0>.us.auth0.com   # your Auth0 issuer 
 
 ### How to do it
 
-1. **Start ngrok first** (Step 8 below) to get your URL, e.g. `https://abc123.ngrok-free.app`
-2. Open your frontend `.env.development` and your backend `.env` in a text editor
-3. Find the lines above (they may already exist) and update the values — replace `<YOUR-NGROK-URL>` with your actual ngrok subdomain (just the part before `.ngrok-free.app`)
-4. **Restart both servers** so they pick up the new values:
+**1. Start ngrok to get your URL**
+
+Open a terminal and run:
+
+```bash
+ngrok http 6969
+```
+
+ngrok will show a screen like this:
+
+```
+Forwarding    https://abc123.ngrok-free.app -> http://localhost:6969
+```
+
+That `https://abc123.ngrok-free.app` part is your URL. Copy it — you'll paste it into your `.env` files next.
+
+> Keep this terminal open. Closing it kills the tunnel and the URL stops working.
+
+**2. Update your `.env` files**
+
+Open your frontend `.env.development` and your backend `.env` in a text editor, find the relevant lines, and replace `localhost` (or the old ngrok URL) with the new one. For example:
+
+```env
+# Before
+GATSBY_API_URL=http://localhost:3000/api
+
+# After
+GATSBY_API_URL=https://abc123.ngrok-free.app/api
+```
+
+**3. Restart both servers** so they pick up the new values:
 
 ```bash
 # Stop each server with Ctrl+C, then start it again
 npm run dev
 ```
+
+**To stop ngrok** when you're done: go to the ngrok terminal and press `Ctrl+C`. The tunnel closes immediately and the URL stops working for your teammate.
 
 ### When you're done sharing
 
@@ -261,20 +290,20 @@ Next time you share, just uncomment those lines, update the URL (it changes ever
 
 ### Linux / macOS / WSL2
 
-> You need `sudo` because nginx binds to a port.
+> You need `sudo` because nginx needs special permission to open a port.
 
-Navigate to the folder containing `nginx.conf`, then run:
+Run this command with the **full path** to your `nginx.conf` file:
 
 ```bash
-sudo nginx -c "$(pwd)/nginx.conf"
+sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf"
 ```
 
-`$(pwd)` fills in the absolute path automatically — nginx requires it.
+Just replace `/home/yourName/myproject/nginx/nginx.conf` with the actual location of your file. Not sure what your full path is? Open a terminal in the folder where `nginx.conf` lives and run `pwd` — it prints the full path for you.
 
-Reload after config changes:
+Reload after config changes (same path):
 
 ```bash
-sudo nginx -c "$(pwd)/nginx.conf" -s reload
+sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf" -s reload
 ```
 
 Stop nginx:
@@ -285,23 +314,18 @@ sudo nginx -s stop
 
 ### Windows (native)
 
-Open **Command Prompt as Administrator** (right-click → Run as administrator), navigate to where `nginx.conf` is, then run:
+Open **Command Prompt as Administrator** (right-click the Start menu → "Command Prompt (Admin)"), then run:
 
 ```cmd
-cd C:\nginx
-nginx -c C:\path\to\your\nginx.conf
+nginx -c C:\Users\YourName\myproject\nginx\nginx.conf
 ```
 
-Replace `C:\path\to\your\nginx.conf` with the actual full path to the config file, for example:
-
-```cmd
-nginx -c C:\Users\YourName\projects\turbodocx\nginx\nginx.conf
-```
+Replace `C:\Users\YourName\myproject\nginx\nginx.conf` with the actual location of your file. Not sure of the full path? Open File Explorer, go to the folder where `nginx.conf` is, click the address bar at the top — it shows the full path. Copy and paste it, then add `\nginx.conf` at the end.
 
 Reload after config changes:
 
 ```cmd
-nginx -c C:\Users\YourName\projects\turbodocx\nginx\nginx.conf -s reload
+nginx -c C:\Users\YourName\myproject\nginx\nginx.conf -s reload
 ```
 
 Stop nginx:
@@ -372,8 +396,8 @@ Copy the `https://abc123.ngrok-free.app` URL and send it to your teammate.
 Run these in order, each in its own terminal:
 
 ```bash
-# 1. Start nginx
-sudo nginx -c "$(pwd)/nginx.conf"
+# 1. Start nginx — replace the path with your actual nginx.conf location
+sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf"
 
 # 2. Start your backend (new terminal)
 npm run dev   # port 3000
