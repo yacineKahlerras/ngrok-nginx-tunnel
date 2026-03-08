@@ -50,8 +50,12 @@ So `https://abc123.ngrok-free.app/` loads the frontend, and `https://abc123.ngro
 
 **Option A — use the script (recommended):**
 
-1. Open [`start.sh`](start.sh) and set your `NGINX_CONF` path at the top
-2. Run it:
+1. Open [`start.sh`](start.sh) in a text editor
+2. On line 5, replace the path with the full path to your `nginx.conf`, for example:
+```bash
+NGINX_CONF="/home/yourName/myproject/nginx/nginx.conf"
+```
+3. Run it:
 ```bash
 ./start.sh
 ```
@@ -82,8 +86,12 @@ npm run dev   # port 8000
 
 **Option A — use the script (recommended):**
 
-1. Open [`start.ps1`](start.ps1) and set your `$NginxConf` path at the top
-2. Run it in PowerShell **as Administrator**:
+1. Open [`start.ps1`](start.ps1) in a text editor
+2. On line 4, replace the path with the full path to your `nginx.conf`, for example:
+```powershell
+$NginxConf = "C:\Users\YourName\myproject\nginx\nginx.conf"
+```
+3. Run it in PowerShell **as Administrator**:
 ```powershell
 .\start.ps1
 ```
