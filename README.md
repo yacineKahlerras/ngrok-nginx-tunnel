@@ -137,20 +137,59 @@ You only need to do this once — it saves the token to your local config file.
 
 Clone or download this repo, then place the `nginx.conf` file wherever you want. We recommend your project folder.
 
-Here's what the config does:
+The full config is in [`nginx.conf`](nginx.conf) in this repo. Here's what it contains:
 
 ```nginx
-server {
-    listen 6969;  # <-- nginx listens on this single port
+# Custom nginx config - no root required for this file
+# But you'll still need sudo to run nginx on port 80
 
-    # Anything starting with /api/ goes to your backend (port 3000)
-    location /api/ {
-        proxy_pass http://localhost:3000/;
-    }
+worker_processes  1;
 
-    # Everything else goes to your frontend (port 8000)
-    location / {
-        proxy_pass http://localhost:8000;
+events {
+    worker_connections 1024;
+}
+
+http {
+
+    # Use /tmp for nginx temp files (writable with sudo)
+    client_body_temp_path /tmp/nginx_client_temp;
+    proxy_temp_path       /tmp/nginx_proxy_temp;
+    fastcgi_temp_path     /tmp/nginx_fastcgi_temp;
+    uwsgi_temp_path       /tmp/nginx_uwsgi_temp;
+    scgi_temp_path        /tmp/nginx_scgi_temp;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen 6969;  # Single port for ngrok - nginx listens here
+        server_name localhost;
+
+        # Backend API routes - forward to port 3000
+        location /api/ {
+            proxy_pass http://localhost:3000/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
+
+        # Frontend - forward everything else to port 8000
+        location / {
+            proxy_pass http://localhost:8000;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
+        }
     }
 }
 ```
