@@ -194,9 +194,17 @@ http {
 
 Your frontend and backend need to know the ngrok URL so they talk to each other through the tunnel instead of `localhost`.
 
-We've included two ready-to-use env files in this repo: [`.env.frontend`](.env.frontend) and [`.env.backend`](.env.backend). You'll copy the relevant lines into your existing `.env` files.
+> **Heads up**: The variables below are specific to my project's stack (Gatsby frontend + Express backend + Auth0). **Your project probably uses different variable names** — that's fine. The concept is the same: find whichever env var holds your API URL or backend URL, and swap `localhost` for your ngrok URL. The names don't matter, only what they point to.
 
-### What the variables do
+We've included two ready-to-use env files in this repo as examples: [`.env.frontend`](.env.frontend) and [`.env.backend`](.env.backend).
+
+### The idea in plain English
+
+Think of it like this: your frontend has a note somewhere that says _"send API calls to `http://localhost:3000`"_. While you're sharing via ngrok, you need to change that note to say _"send API calls to `https://abc123.ngrok-free.app/api`"_ instead. That's all this step is — find that note in your `.env` file and update the URL.
+
+When you're done sharing, you change it back (or comment it out and restore the localhost one).
+
+### What the variables do in this project
 
 **Frontend** — copy these into your frontend `.env.development` (or equivalent):
 
@@ -233,12 +241,14 @@ npm run dev
 Comment out those lines instead of deleting them — you'll want them ready for next time:
 
 **Frontend `.env.development`:**
+
 ```env
 # GATSBY_API_URL=https://<YOUR-NGROK-URL>.ngrok-free.app/api
 # GATSBY_DOMAIN=https://<YOUR-NGROK-URL>.ngrok-free.app
 ```
 
 **Backend `.env`:**
+
 ```env
 # FRONTEND_URL=https://<YOUR-NGROK-URL>.ngrok-free.app
 ```
