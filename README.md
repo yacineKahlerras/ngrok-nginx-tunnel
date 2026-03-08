@@ -151,7 +151,9 @@ events {
 
 http {
 
-    # Use /tmp for nginx temp files (writable with sudo)
+    # Linux/WSL2 only: redirect temp files to /tmp to avoid permission issues
+    # when running nginx with a custom config file.
+    # Windows users: remove or comment out these 5 lines — nginx handles temp files automatically.
     client_body_temp_path /tmp/nginx_client_temp;
     proxy_temp_path       /tmp/nginx_proxy_temp;
     fastcgi_temp_path     /tmp/nginx_fastcgi_temp;
@@ -198,25 +200,9 @@ http {
 
 ### Windows: temp folder config
 
-On Windows, nginx needs writable temp folders. The provided `nginx.conf` already sets these to `/tmp/` which works in WSL2. For **native Windows**, replace the temp path lines at the top of `nginx.conf` with:
+The `client_body_temp_path` and related lines in `nginx.conf` are **only needed on Linux/WSL2** — they redirect temp files to `/tmp/` to avoid permission issues when running nginx with a custom config.
 
-```nginx
-client_body_temp_path  C:/nginx/temp/client;
-proxy_temp_path        C:/nginx/temp/proxy;
-fastcgi_temp_path      C:/nginx/temp/fastcgi;
-uwsgi_temp_path        C:/nginx/temp/uwsgi;
-scgi_temp_path         C:/nginx/temp/scgi;
-```
-
-Then create those folders before starting:
-
-```powershell
-mkdir C:\nginx\temp\client
-mkdir C:\nginx\temp\proxy
-mkdir C:\nginx\temp\fastcgi
-mkdir C:\nginx\temp\uwsgi
-mkdir C:\nginx\temp\scgi
-```
+On **native Windows**, nginx automatically creates a `temp\` folder inside its own installation directory and uses it by default. You can safely **remove or ignore those lines** when using Windows.
 
 ---
 
