@@ -250,7 +250,7 @@ Open your frontend `.env.development` and your backend `.env` in a text editor, 
 
 ```env
 # Before
-GATSBY_API_URL=http://localhost:3000/api
+GATSBY_API_URL=http://localhost:3000
 
 # After
 GATSBY_API_URL=https://abc123.ngrok-free.app/api
