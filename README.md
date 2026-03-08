@@ -44,9 +44,20 @@ So `https://abc123.ngrok-free.app/` loads the frontend, and `https://abc123.ngro
 
 ## ⚡ Quick Start
 
-> Already have nginx + ngrok installed? Run this every time you want to share.
+> Already have nginx + ngrok installed? Use the scripts below — they start everything and **auto-stop nginx when you hit Ctrl+C**.
 
 ### Linux / macOS / WSL2
+
+**Option A — use the script (recommended):**
+
+1. Open [`start.sh`](start.sh) and set your `NGINX_CONF` path at the top
+2. Run it:
+```bash
+./start.sh
+```
+Ctrl+C stops ngrok and nginx automatically.
+
+**Option B — manually:**
 
 ```bash
 # 1. Start nginx (use the full path to your nginx.conf)
@@ -67,7 +78,18 @@ npm run dev   # port 8000
 # 6. Send the ngrok URL to your teammate
 ```
 
-### Windows (Admin Command Prompt for step 1, regular terminals for the rest)
+### Windows
+
+**Option A — use the script (recommended):**
+
+1. Open [`start.ps1`](start.ps1) and set your `$NginxConf` path at the top
+2. Run it in PowerShell **as Administrator**:
+```powershell
+.\start.ps1
+```
+Ctrl+C stops ngrok and nginx automatically.
+
+**Option B — manually (Admin Command Prompt for step 1, regular terminals for the rest):**
 
 ```cmd
 :: 1. Start nginx (use the full path to your nginx.conf)
