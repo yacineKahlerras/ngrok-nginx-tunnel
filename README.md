@@ -1,4 +1,4 @@
-# ngrok-port-forwarding
+# ngrok One-Port Workaround Using nginx
 
 Share your local dev environment with teammates using **nginx + ngrok** — without paying for a ngrok upgrade.
 
@@ -92,16 +92,19 @@ brew install ngrok/ngrok/ngrok
 ### Windows (native)
 
 **Option A — Chocolatey** (recommended if you have it):
+
 ```powershell
 choco install ngrok
 ```
 
 **Option B — winget**:
+
 ```powershell
 winget install ngrok.ngrok
 ```
 
 **Option C — manual**:
+
 1. Go to [ngrok.com/download](https://ngrok.com/download)
 2. Download the Windows zip
 3. Extract `ngrok.exe` to a folder, e.g. `C:\ngrok\`
@@ -380,16 +383,16 @@ nginx -s stop
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---|---|
-| `nginx: [error] open() "/path/nginx.conf" failed` | Use the full absolute path. On Linux/macOS use `$(pwd)/nginx.conf`. On Windows write it out: `C:\path\to\nginx.conf` |
-| `bind() to 0.0.0.0:6969 failed (98: Address already in use)` | Port 6969 is taken. Stop the other process or change the port in `nginx.conf` and in the ngrok command |
-| Windows: `CreateFile()` or permission errors on temp folders | Create the temp folders manually (see Step 4 Windows section) and run Command Prompt as Administrator |
-| Windows: nginx starts but immediately closes | Check `C:\nginx\logs\error.log` for the error message |
-| `curl http://localhost:6969` returns nothing | Your app on port 3000 or 8000 isn't running yet |
-| ngrok shows `ERR_NGROK_3200` | Your local server isn't running or isn't reachable on the expected port |
-| Teammate gets a browser warning about the ngrok URL | They need to click "Visit Site" to bypass ngrok's free tier interstitial page |
-| Teammate's API calls fail with CORS errors | Make sure your backend's CORS config allows the ngrok domain |
+| Problem                                                      | Fix                                                                                                                  |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `nginx: [error] open() "/path/nginx.conf" failed`            | Use the full absolute path. On Linux/macOS use `$(pwd)/nginx.conf`. On Windows write it out: `C:\path\to\nginx.conf` |
+| `bind() to 0.0.0.0:6969 failed (98: Address already in use)` | Port 6969 is taken. Stop the other process or change the port in `nginx.conf` and in the ngrok command               |
+| Windows: `CreateFile()` or permission errors on temp folders | Create the temp folders manually (see Step 4 Windows section) and run Command Prompt as Administrator                |
+| Windows: nginx starts but immediately closes                 | Check `C:\nginx\logs\error.log` for the error message                                                                |
+| `curl http://localhost:6969` returns nothing                 | Your app on port 3000 or 8000 isn't running yet                                                                      |
+| ngrok shows `ERR_NGROK_3200`                                 | Your local server isn't running or isn't reachable on the expected port                                              |
+| Teammate gets a browser warning about the ngrok URL          | They need to click "Visit Site" to bypass ngrok's free tier interstitial page                                        |
+| Teammate's API calls fail with CORS errors                   | Make sure your backend's CORS config allows the ngrok domain                                                         |
 
 ---
 
