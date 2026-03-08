@@ -2,7 +2,7 @@
 
 # ─────────────────────────────────────────────
 # EDIT THIS: full path to your nginx.conf
-NGINX_CONF="/home/yourName/myproject/nginx/nginx.conf"
+NGINX_CONF="/home/yacine/turbodocx/nginx/nginx.conf"
 
 # EDIT THIS: the port nginx listens on (must match nginx.conf)
 NGROK_PORT=6969
