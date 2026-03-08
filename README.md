@@ -20,6 +20,54 @@ Frontend  Backend API
 
 ---
 
+## Quick Start
+
+Already have nginx and ngrok installed? Here's the full sequence every time you want to share.
+
+### Linux / macOS / WSL2
+
+```bash
+# 1. Start nginx — use the full path to your nginx.conf
+sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf"
+
+# 2. Start ngrok in a new terminal — copy the URL it gives you
+ngrok http 6969
+
+# 3. Update your .env files with the ngrok URL, then save
+
+# 4. Start your backend in a new terminal
+npm run dev   # port 3000
+
+# 5. Start your frontend in a new terminal
+npm run dev   # port 8000
+
+# 6. Share the ngrok URL with your teammate
+```
+
+### Windows (native)
+
+```cmd
+:: 1. Start nginx — Admin Command Prompt, use the full path to your nginx.conf
+nginx -c C:\Users\YourName\myproject\nginx\nginx.conf
+
+:: 2. Start ngrok in a new terminal — copy the URL it gives you
+ngrok http 6969
+
+:: 3. Update your .env files with the ngrok URL, then save
+
+:: 4. Start your backend in a new terminal
+npm run dev
+
+:: 5. Start your frontend in a new terminal
+npm run dev
+
+:: 6. Share the ngrok URL with your teammate
+```
+
+> First time? Read the step-by-step setup below.
+
+---
+
 ## Prerequisites
 
 - A machine running **Linux, macOS, Windows (native), or WSL2**
