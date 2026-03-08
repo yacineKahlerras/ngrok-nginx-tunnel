@@ -27,7 +27,7 @@ Already have nginx and ngrok installed? Here's the full sequence every time you 
 ### Linux / macOS / WSL2
 
 ```bash
-# 1. Start nginx — use the full path to your nginx.conf
+# 1. Start nginx — use the full path to your nginx config file
 sudo nginx -c "/home/yourName/myproject/nginx/nginx.conf"
 
 # 2. Start ngrok in a new terminal — copy the URL it gives you
@@ -47,7 +47,7 @@ npm run dev   # port 8000
 ### Windows (native)
 
 ```cmd
-:: 1. Start nginx — Admin Command Prompt, use the full path to your nginx.conf
+:: 1. Start nginx — Admin Command Prompt, use the full path to your nginx config file
 nginx -c C:\Users\YourName\myproject\nginx\nginx.conf
 
 :: 2. Start ngrok in a new terminal — copy the URL it gives you
@@ -121,15 +121,24 @@ Both should print something like: `nginx version: nginx/1.26.x`
 
 ### Ubuntu / Debian / WSL2
 
+Run these 3 commands one at a time. They add ngrok as a trusted source so `apt` can install it like any other package.
+
+**Command 1** — download and trust ngrok's security key:
 ```bash
-curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
-  | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+```
 
-echo "deb https://ngrok-agent.s3.amazonaws.com buster main" \
-  | sudo tee /etc/apt/sources.list.d/ngrok.list
+**Command 2** — tell apt where to find ngrok:
+```bash
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+```
 
+**Command 3** — install it:
+```bash
 sudo apt update && sudo apt install ngrok -y
 ```
+
+> **Simpler alternative**: if you have Snap installed, just run `snap install ngrok` and skip the 3 commands above.
 
 ### macOS (Homebrew)
 
